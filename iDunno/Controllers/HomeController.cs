@@ -53,7 +53,8 @@ namespace iDunno.Controllers
         public ActionResult Login(LoginScreen screen)
         {
             if(this.ModelState.IsValid)
-            {   
+            {
+                return RedirectToAction("Index");   
             }
             return View();
         }
