@@ -13,14 +13,26 @@ namespace iDunno.Models
 
     public class TargetItem
     {
+        public string Url { get; set; }
+        public string Id { get; set; }
         public string Description { get; set; }
         public TargetItem()
         {
 
         }
+        public string ImgUrl { get; set; }
+        //unstructured_data.images
         public TargetItem(dynamic trio)
         {
+            Url = trio.data_page_link;
             Description = trio.alternate_description[0].value;
+            Id = trio.identifier[1].id;
+            try {
+                ImgUrl = trio.image.internal_primary_image_url[0];
+            }catch(Exception er)
+            {
+
+            }
         }
     }
     public class TargetAPI
@@ -30,7 +42,7 @@ namespace iDunno.Models
         {
             WebClient mclient = new WebClient();
             
-            string txt = mclient.DownloadString("https://api.target.com/items/v3/" + itemID + "/?id_type=tcin&key=Id8SS1KAXuFd2W7R60XC5AUTTGKbnU2U&fields=descriptions,locations,internal_images,environmental");
+            string txt = mclient.DownloadString("https://api.target.com/items/v3/" + itemID + "/?id_type=tcin&key=Id8SS1KAXuFd2W7R60XC5AUTTGKbnU2U&fields=descriptions,locations,images,environmental");
             return Newtonsoft.Json.JsonConvert.DeserializeObject(txt);
 
         }
@@ -64,7 +76,7 @@ namespace iDunno.Models
             var results = Search(query);
             List<Task<dynamic>> pendingRequests = new List<Task<dynamic>>();
 
-            foreach (var et in results)
+            foreach (var et in results.Take(5))
             {
                 pendingRequests.Add(FetchAsync(et));
             }
