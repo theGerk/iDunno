@@ -8,28 +8,102 @@
     <link rel="stylesheet" href="~/Content/bootstrap-theme.css" />
     <script type="text/javascript" src="~/Scripts/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="~/Scripts/bootstrap.js"></script>
-    <style> 
-    #productDisp {
-        background-color: #ff1221;
-        box-shadow: 10px 10px 5px #888888;
-        width: 60%;
-        height: 600px;
-        margin: 0 auto;
-        border-top-left-radius: 1em;
-        border-top-right-radius: 1em;
-        border-bottom-left-radius: 1em;
-        border-bottom-right-radius: 1em;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-align-content: center;
-        align-content: center;
-    }
-    #descript {
-        padding:10px 5px 10px 5px;
+    <style>
+/*        #header {
+            background-color: #FFF;
+            color: #000;
+        }
+*/
+        ​ #productDisp {
+            background-color: #ff1221;
+            box-shadow: 10px 10px 5px #888888;
+            width: 60%;
+            height: 600px;
+            margin: 0 auto;
+            border-top-left-radius: 1em;
+            border-top-right-radius: 1em;
+            border-bottom-left-radius: 1em;
+            border-bottom-right-radius: 1em;
+            /*display: -webkit-flex;
+            display: flex;
+            -webkit-align-content: center;
+            align-content: center;*/
+        }
 
-    }
-    
+        #logo {
+            font-size: 30px;
+            line-height: 40px;
+            padding: 5px;
+        }
+
+        #navWrap {
+            height: 30px;
+        }
+
+        #nav {
+            padding: 5px;
+            background: #F00;
+        }
+
+            #nav ul {
+                margin: 0;
+                padding: 0;
+            }
+
+            #nav li {
+                float: left;
+                padding: 3px 8px;
+                background-color: #FFF;
+                margin: 0 10px 0 0;
+                color: #000;
+                list-style-type: none;
+            }
+
+                #nav li a {
+                    color: #F00;
+                    text-decoration: none;
+                }
+
+                    #nav li a:hover {
+                        text-decoration: underline;
+                    }
+
+        br.clearLeft {
+            clear: left;
+        }
+
+        #descript {
+            padding: 10px 5px 10px 5px;
+        }
     </style>
+    <script>
+        $(function () {
+            // Stick the #nav to the top of the window
+            var nav = $('#nav');
+            var navHomeY = nav.offset().top;
+            var isFixed = false;
+            var $w = $(window);
+            $w.scroll(function () {
+                var scrollTop = $w.scrollTop();
+                var shouldBeFixed = scrollTop > navHomeY;
+                if (shouldBeFixed && !isFixed) {
+                    nav.css({
+                        position: 'fixed',
+                        top: 0,
+                        left: nav.offset().left,
+                        width: nav.width()
+                    });
+                    isFixed = true;
+                }
+                else if (!shouldBeFixed && isFixed) {
+                    nav.css({
+                        position: 'static'
+                    });
+                    isFixed = false;
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div>

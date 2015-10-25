@@ -17,13 +17,28 @@
 
 </script>
 
-<h2>Product Search</h2>
-<hr />
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+    <div id="header">
+        <div id="logo">Start Slowly Scrolling Down<br /> This Page!</div>
+        <div id="navWrap">
+            <div id="nav">
+                <ul>
+                    <li><a href="#" class="smoothScroll">Demo Link 1</a></li>
+                    <li><a href="#" class="smoothScroll">Demo Link 2</a></li>
+                    <li><a href="#" class="smoothScroll">Demo Link 3</a></li>
+                    <li><a href="#" class="smoothScroll">Demo Link 4</a></li>
+                </ul>
+                <br class="clearLeft" />
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h2>Product Search</h2>
     <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
+    <hr />
     <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
     <br />
 if (Model.QueryID != null)
