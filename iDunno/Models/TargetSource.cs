@@ -44,7 +44,6 @@ namespace iDunno.Models
             WebClient mclient = new WebClient();
             
             string txt = mclient.DownloadString("https://api.target.com/items/v3/" + itemID + "/?id_type=tcin&key=Id8SS1KAXuFd2W7R60XC5AUTTGKbnU2U&fields=descriptions,locations,images,environmental");
-           // Console.WriteLine(txt);
             return Newtonsoft.Json.JsonConvert.DeserializeObject(txt);
 
         }
