@@ -17,15 +17,15 @@
 
 </script>
 
-<h2>Product Search</h2>
-<hr />
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-    <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
-    <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
-    <br />
+    <div id="talkBar">
+        <h2>Product Search</h2>
+        <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
+        <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
+    </div>
+    <div id="behindBar">this is some text</div>
 if (Model.QueryID != null)
 {
     foreach (var et in Model.Items)
