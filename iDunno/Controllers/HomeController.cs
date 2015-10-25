@@ -59,10 +59,10 @@ namespace iDunno.Controllers
         }
         [HttpGet]
         // GET: Home
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-
-            return View(new HomeScreen());
+            iDunnoDB db = new iDunnoDB();
+            return View(new HomeScreen() { PopularItems = await db.GetTopProducts() });
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
