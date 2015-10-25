@@ -15,6 +15,7 @@ namespace iDunno.Models
     {
         public string Url { get; set; }
         public string Id { get; set; }
+        public double Price { get; set; }
         public string Description { get; set; }
         public TargetItem()
         {
