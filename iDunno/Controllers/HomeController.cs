@@ -44,14 +44,31 @@ namespace iDunno.Controllers
         {
             if(this.ModelState.IsValid)
             {
-
+                
             }
             return View();
         }
+        [HttpGet]
         // GET: Home
         public ActionResult Index()
         {
-            return View();
+
+            return View(new HomeScreen());
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        //POST home
+        public ActionResult Index(string search)
+        {
+            TargetAPI api = new TargetAPI();
+            HomeScreen screen = new HomeScreen();
+            List<TargetItem> items = new List<TargetItem>();
+            foreach (dynamic duo in api.FastSearch(search))
+            {
+                items.Add(new TargetItem(duo));
+            }
+            screen.Items = items;
+            return View(screen);
         }
     }
 }
