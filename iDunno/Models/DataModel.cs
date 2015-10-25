@@ -30,6 +30,22 @@ namespace iDunno.Models
         public IEnumerable<TargetItem> Items { get; set; }
         public string SearchQuery { get; set; }
         public string QueryID { get; set; }
+        public IEnumerable<ProductStatistics> PopularItems { get; set; }
+        public IEnumerable<TargetItem> PopularItemsView
+        {
+            get
+            {
+                TargetAPI api = new TargetAPI();
+                List<Task<dynamic>> quartets = new List<Task<dynamic>>();
+                foreach(string et in PopularItems.Select(m=>m.ProductID))
+                {
+                    quartets.Add(api.FetchAsync(et));
+                }
+                Task.WaitAll(quartets.ToArray());
+                return quartets.Select(m => new TargetItem(m.Result));
+                
+            }
+        }
         public HomeScreen()
         {
             Items = new List<TargetItem>();
@@ -106,7 +122,14 @@ namespace iDunno.Models
         public string LastName { get; set; }
         public string IpAddress { get; set; }
         public DateTime LastAccessTime { get; set; }
+        public List<UserClickRecent> RecentClicks { get; set; }
 
+    }
+    public class UserClickRecent
+    {
+        public string ProductID { get; set; }
+        public long TimesClicked { get; set; }
+        public DateTime MostRecentClick { get; set; }
     }
     public class ProductSearch
     {
@@ -133,22 +156,63 @@ namespace iDunno.Models
 
     public class iDunnoDB
     {
+        public async Task<IEnumerable<ProductStatistics>> GetTopProducts()
+        {
+            var query = await db.GetCollection<ProductStatistics>("statistics").Find(Builders<ProductStatistics>.Filter.Exists(m => m.ProductID)).SortByDescending(m=>m.ViewCount).Limit(5).ToListAsync();
+            return query;
+        }
 
         public async Task<ProductStatistics> GetProductStatistics(string id)
         {
-            // var results = (await db.GetCollection<ProductStatistics>("statistics").Find(Builders<ProductStatistics>.Filter.Eq(m => m.ProductID, id));
-            return null;
+            var results = await db.GetCollection<ProductStatistics>("statistics").Find(Builders<ProductStatistics>.Filter.Eq(m => m.ProductID, id)).ToListAsync();
+            if(results.Any())
+            {
+                return results.First();
+            }else
+            {
+                var ps = new ProductStatistics();
+                ps.ProductID = id;
+                await db.GetCollection<ProductStatistics>("statistics").InsertOneAsync(ps);
+                return ps;
+            }
         }
         public async Task LogClick(string queryID, string productID)
         {
+            var session = await getCurrentSession();
             ProductClick click = new ProductClick();
-            click.ProductSearch = new BsonObjectId(new ObjectId(queryID));
+            if (queryID != null)
+            {
+                click.ProductSearch = new BsonObjectId(new ObjectId(queryID));
+            }
             click.Time = DateTime.UtcNow;
             click.ProductID = productID;
-            //Get product
-
-
+            //Update product statistics
+            var stats = await GetProductStatistics(productID);
+            await db.GetCollection<ProductStatistics>("statistics").UpdateOneAsync(Builders<ProductStatistics>.Filter.Eq(m=>m.ProductID,productID),Builders<ProductStatistics>.Update.Inc(m=>m.ViewCount,1));
             await db.GetCollection<ProductClick>("clicks").InsertOneAsync(click);
+
+            var profile = (await db.GetCollection<UserInformation>("users").Find(Builders<UserInformation>.Filter.Eq(m=>m.ID,session.Id)).ToListAsync()).First();
+
+            if (profile.RecentClicks.Where(m => m.ProductID == productID).Any())
+            {
+                profile.RecentClicks.Where(m => m.ProductID == productID).First().TimesClicked++;
+            }
+            else
+            {
+                if (profile.RecentClicks.Count == 5)
+                {
+
+                }
+                else
+                {
+                    profile.RecentClicks.Add(new UserClickRecent() { MostRecentClick = DateTime.UtcNow, ProductID = productID, TimesClicked = 1 });
+                }
+            }
+            
+
+            await db.GetCollection<UserInformation>("users").UpdateOneAsync(Builders<UserInformation>.Filter.Eq(m => m.ID, session.Id), Builders<UserInformation>.Update.Set(m => m.RecentClicks, profile.RecentClicks));
+
+
         }
         public async Task<ProductSearch> LogSearch(string query)
         {
