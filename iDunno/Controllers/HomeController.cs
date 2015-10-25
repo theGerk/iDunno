@@ -12,6 +12,12 @@ namespace iDunno.Controllers
 
     public class HomeController : Controller
     {
+        public ActionResult ViewProduct(string Id)
+        {
+            TargetAPI api = new TargetAPI();
+            TargetItem item = new TargetItem(api.GetObjectData(Id));
+            return Redirect(item.Url);
+        }
         [HttpGet]
         public ActionResult Register()
         {
