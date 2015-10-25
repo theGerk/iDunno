@@ -13,6 +13,15 @@ using System.Security.Cryptography;
 namespace iDunno.Models
 {
 
+    public class HomeScreen
+    {
+        public IEnumerable<TargetItem> Items { get; set; }
+        public HomeScreen()
+        {
+            Items = new List<TargetItem>();
+        }
+    }
+
 
 
     //MongoDB command line -- mongod.exe --replSet idnSet

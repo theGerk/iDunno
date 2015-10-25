@@ -1,8 +1,20 @@
-﻿
+﻿@model iDunno.Models.HomeScreen
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Home/_LayoutPage.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Product Search</h2>
+<hr />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <label for="search"></label><input type="search" name="search" />
+    <br />
+    foreach(var et in Model.Items)
+    {
+        <br />@et.Description
+    }
 
+
+}
