@@ -36,8 +36,15 @@ if (Model.QueryID != null)
 {
     <h1>Popular items</h1>
     <hr />
+        if (Model.PopularItems != null)
+        {
+            foreach (var et in Model.PopularItemsView)
+            {
+                <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
 
-}
+            }
+        }
+    }
 
 
 

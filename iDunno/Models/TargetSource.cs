@@ -54,6 +54,7 @@ namespace iDunno.Models
             objdata = objdata[0];
             return objdata;
         }
+
         public IEnumerable<string> Search(string query)
         {
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
@@ -67,7 +68,7 @@ namespace iDunno.Models
             }
 
         }
-        Task<dynamic> FetchAsync(string obj)
+        public Task<dynamic> FetchAsync(string obj)
         {
             return Task<dynamic>.Run(() => {
                 return GetObjectData(obj);
@@ -82,14 +83,9 @@ namespace iDunno.Models
             {
                 pendingRequests.Add(FetchAsync(et));
             }
-            
-            while(pendingRequests.Any())
-            {
-                var task = Task.WaitAny(pendingRequests.ToArray());
-                var result = pendingRequests[task].Result;
-                pendingRequests.RemoveAt(task);
-                yield return result;
-            }
+
+            Task.WaitAll(pendingRequests.ToArray());
+            return pendingRequests.Select(m => m.Result);
         }
         public TargetAPI()
         {
