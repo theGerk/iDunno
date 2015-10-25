@@ -22,23 +22,22 @@
 {
     @Html.AntiForgeryToken()
     <div id="header">
-        <div id="logo">Start Slowly Scrolling Down<br /> This Page!</div>
         <div id="navWrap">
             <div id="nav">
                 <ul>
-                    <li><a href="#" class="smoothScroll">Demo Link 1</a></li>
-                    <li><a href="#" class="smoothScroll">Demo Link 2</a></li>
-                    <li><a href="#" class="smoothScroll">Demo Link 3</a></li>
-                    <li><a href="#" class="smoothScroll">Demo Link 4</a></li>
+                    <li>
+                        <h2>Product Search</h2>
+                        <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
+                    </li>
                 </ul>
                 <br class="clearLeft" />
             </div>
         </div>
     </div>
-    <hr />
+    <!--    <hr />
     <h2>Product Search</h2>
     <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
-    <hr />
+    <hr />  -->
     <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
     <br />
 if (Model.QueryID != null)
@@ -51,6 +50,9 @@ if (Model.QueryID != null)
     }
 }else
 {
+        <br />
+        <br />
+        <hr />
         <h1>Recently viewed</h1>
         foreach (var et in Model.UserItems)
         {
