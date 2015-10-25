@@ -73,10 +73,18 @@ namespace iDunno.Models
 
     }
 
+    /*public class RegistrationScreenPt2
+    {
+        [Display (Name = "Age")]
+        public int Age { get; set; }
+        [Display (Name = "Gender")]
+        public string Gender { get; set; }
+        [Display (Name = "Catories of Interest")]
+    }*/
+
     public class UserInformation
     {
-        public string Username { get; set; }
-        
+        public string Username { get; set; }        
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
         public string FirstName { get; set; }
