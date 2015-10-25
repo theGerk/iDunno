@@ -1,8 +1,44 @@
-﻿
+﻿@model iDunno.Models.HomeScreen
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Home/_LayoutPage.cshtml";
 }
 
-<h2>Index</h2>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var coords = { Latitude: position.coords.latitude, Longitude: position.coords.longitude };
+                $.get('/Home/Location?latitude=' + coords.Latitude + '&longitude=' + coords.Longitude);
 
+            });
+        }
+    });
+
+</script>
+
+<h2>Product Search</h2>
+<hr />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
+    <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
+    <br />
+@if (Model.QueryID != null)
+{
+    foreach (var et in Model.Items)
+    {
+        <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
+    }
+}else
+{
+    <h1>Popular items</h1>
+    <hr />
+
+}
+
+
+
+}

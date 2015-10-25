@@ -13,6 +13,29 @@ using System.Security.Cryptography;
 namespace iDunno.Models
 {
 
+    public class ProductStatistics
+    {
+        public ProductStatistics()
+        {
+
+        }
+        public BsonObjectId Id { get; set; }
+        public string ProductID { get; set; }
+        public long ViewCount { get; set; }
+    }
+
+
+    public class HomeScreen
+    {
+        public IEnumerable<TargetItem> Items { get; set; }
+        public string SearchQuery { get; set; }
+        public string QueryID { get; set; }
+        public HomeScreen()
+        {
+            Items = new List<TargetItem>();
+        }
+    }
+
 
 
     //MongoDB command line -- mongod.exe --replSet idnSet
@@ -64,10 +87,19 @@ namespace iDunno.Models
 
     }
 
+    /*public class RegistrationScreenPt2
+    {
+        [Display (Name = "Age")]
+        public int Age { get; set; }
+        [Display (Name = "Gender")]
+        public string Gender { get; set; }
+        [Display (Name = "Catories of Interest")]
+    }*/
+
     public class UserInformation
     {
-        public string Username { get; set; }
-        
+        public BsonObjectId ID { get; set; }
+        public string Username { get; set; }        
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
         public string FirstName { get; set; }
@@ -76,16 +108,59 @@ namespace iDunno.Models
         public DateTime LastAccessTime { get; set; }
 
     }
+    public class ProductSearch
+    {
+        public BsonObjectId Id { get; set; }
+        public string SearchText { get; set; }
+        public DateTime Time { get; set; }
+        public BsonObjectId User { get; set; }
 
+    }
+    public class ProductClick
+    {
+        public BsonObjectId Id { get; set; }
+        public BsonObjectId ProductSearch { get; set; }
+        public DateTime Time { get; set; }
+        public string ProductID { get; set; }
+    }
     public class SessionInformation
     {
         public BsonObjectId Id { get; set; }
         public string SessionID { get; set; }
-        public string UserName { get; set; }
+        public BsonObjectId User { get; set; }
+
     }
 
     public class iDunnoDB
     {
+
+        public async Task<ProductStatistics> GetProductStatistics(string id)
+        {
+            // var results = (await db.GetCollection<ProductStatistics>("statistics").Find(Builders<ProductStatistics>.Filter.Eq(m => m.ProductID, id));
+            return null;
+        }
+        public async Task LogClick(string queryID, string productID)
+        {
+            ProductClick click = new ProductClick();
+            click.ProductSearch = new BsonObjectId(new ObjectId(queryID));
+            click.Time = DateTime.UtcNow;
+            click.ProductID = productID;
+            //Get product
+
+
+            await db.GetCollection<ProductClick>("clicks").InsertOneAsync(click);
+        }
+        public async Task<ProductSearch> LogSearch(string query)
+        {
+            SessionInformation session = await getCurrentSession();
+            ProductSearch search = new ProductSearch();
+            search.SearchText = query;
+            search.Time = DateTime.UtcNow;
+            search.User = session.User;
+            await db.GetCollection<ProductSearch>("searches").InsertOneAsync(search);
+            return search;
+        }
+
         IMongoDatabase db;
         public async Task<bool> IsLoginValid(string username, string password)
         {
