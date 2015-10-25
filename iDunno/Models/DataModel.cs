@@ -12,6 +12,21 @@ using System.Security.Cryptography;
 
 namespace iDunno.Models
 {
+    public class UserDoesNotExist:ValidationAttribute
+    {
+        public UserDoesNotExist()
+        {
+
+        }
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            System.Threading.SynchronizationContext.SetSynchronizationContext(null);
+            iDunnoDB db = new iDunnoDB();
+            var tsktsktsktsktsktsktsktsktsktsk = db.LookupUser(value as string);
+            tsktsktsktsktsktsktsktsktsktsk.Wait();
+            return tsktsktsktsktsktsktsktsktsktsk.Result == null ? ValidationResult.Success : new ValidationResult("The specified username already exists.");
+        }
+    }
 
     public class ProductStatistics
     {
@@ -77,6 +92,7 @@ namespace iDunno.Models
 
 
     //MongoDB command line -- mongod.exe --replSet idnSet
+    [UserNameAndPasswordIsValid]
     public class LoginScreen
     {
         [Required]
@@ -85,6 +101,24 @@ namespace iDunno.Models
         [DataType(DataType.Password)]
         [Required]
         public string Password { get; set; }
+    }
+    public class UserNameAndPasswordIsValid:ValidationAttribute
+    {
+        public UserNameAndPasswordIsValid()
+        {
+
+        }
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            dynamic quartet = validationContext.ObjectInstance;
+            string username = quartet.UserName;
+            string password = quartet.Password;
+            System.Threading.SynchronizationContext.SetSynchronizationContext(null);
+            var tsktsktsktsk = new iDunnoDB().IsLoginValid(username, password);
+            tsktsktsktsk.Wait();
+            return tsktsktsktsk.Result ? ValidationResult.Success : new ValidationResult("The user name or password is \"incorrect\"");
+
+        }
     }
     public class PasswordAndConfirmPasswordMatch:ValidationAttribute
     {
@@ -108,6 +142,7 @@ namespace iDunno.Models
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        [UserDoesNotExist]
         [Required]
         [Display(Name = "Username")]
         public string Username { get; set; }
@@ -239,6 +274,10 @@ namespace iDunno.Models
                 await db.GetCollection<ProductStatistics>("statistics").InsertOneAsync(ps);
                 return ps;
             }
+        }
+        public async Task<UserInformation> LookupUser(string name)
+        {
+            return (await db.GetCollection<UserInformation>("users").Find(Builders<UserInformation>.Filter.Eq(m => m.Username, name)).ToListAsync()).FirstOrDefault();
         }
         public async Task LogClick(string queryID, string productID)
         {
