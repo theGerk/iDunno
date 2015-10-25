@@ -27,9 +27,31 @@ namespace iDunno.Models
 
     public class HomeScreen
     {
+        public IEnumerable<TargetItem> UserItems {
+            get
+            {
+                if(CurrentUser == null)
+                {
+                    return new TargetItem[0];
+                }
+                TargetAPI api = new TargetAPI();
+                List<Task<dynamic>> trios = new List<Task<dynamic>>();
+                if (CurrentUser.RecentClicks == null)
+                {
+                    CurrentUser.RecentClicks = new List<UserClickRecent>();
+                }
+                foreach(var et in CurrentUser.RecentClicks)
+                {
+                    trios.Add(api.FetchAsync(et.ProductID));
+                }
+                Task.WaitAll(trios.ToArray());
+                return trios.Select(m => new TargetItem(m.Result));
+            }
+        } 
         public IEnumerable<TargetItem> Items { get; set; }
         public string SearchQuery { get; set; }
         public string QueryID { get; set; }
+        public UserInformation CurrentUser { get; set; }
         public IEnumerable<ProductStatistics> PopularItems { get; set; }
         public IEnumerable<TargetItem> PopularItemsView
         {
@@ -114,7 +136,7 @@ namespace iDunno.Models
 
     public class UserInformation
     {
-        public BsonObjectId ID { get; set; }
+        public BsonObjectId Id { get; set; }
         public string Username { get; set; }        
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
@@ -156,6 +178,10 @@ namespace iDunno.Models
 
     public class iDunnoDB
     {
+        public async Task<UserInformation> GetUserById(BsonObjectId id)
+        {
+            return (await db.GetCollection<UserInformation>("users").Find(Builders<UserInformation>.Filter.Eq(m => m.Id, id)).ToListAsync()).First();
+        }
         public async Task<IEnumerable<ProductStatistics>> GetTopProducts()
         {
             var query = await db.GetCollection<ProductStatistics>("statistics").Find(Builders<ProductStatistics>.Filter.Exists(m => m.ProductID)).SortByDescending(m=>m.ViewCount).Limit(5).ToListAsync();
@@ -191,8 +217,11 @@ namespace iDunno.Models
             await db.GetCollection<ProductStatistics>("statistics").UpdateOneAsync(Builders<ProductStatistics>.Filter.Eq(m=>m.ProductID,productID),Builders<ProductStatistics>.Update.Inc(m=>m.ViewCount,1));
             await db.GetCollection<ProductClick>("clicks").InsertOneAsync(click);
 
-            var profile = (await db.GetCollection<UserInformation>("users").Find(Builders<UserInformation>.Filter.Eq(m=>m.ID,session.Id)).ToListAsync()).First();
-
+            var profile = (await db.GetCollection<UserInformation>("users").Find(Builders<UserInformation>.Filter.Eq(m=>m.Id,session.User)).ToListAsync()).First();
+            if(profile.RecentClicks == null)
+            {
+                profile.RecentClicks = new List<UserClickRecent>();
+            }
             if (profile.RecentClicks.Where(m => m.ProductID == productID).Any())
             {
                 profile.RecentClicks.Where(m => m.ProductID == productID).First().TimesClicked++;
@@ -201,16 +230,15 @@ namespace iDunno.Models
             {
                 if (profile.RecentClicks.Count == 5)
                 {
+                    profile.RecentClicks.Remove(profile.RecentClicks.OrderBy(m => m.TimesClicked).First());
 
                 }
-                else
-                {
-                    profile.RecentClicks.Add(new UserClickRecent() { MostRecentClick = DateTime.UtcNow, ProductID = productID, TimesClicked = 1 });
-                }
+                profile.RecentClicks.Add(new UserClickRecent() { MostRecentClick = DateTime.UtcNow, ProductID = productID, TimesClicked = 1 });
+
             }
             
 
-            await db.GetCollection<UserInformation>("users").UpdateOneAsync(Builders<UserInformation>.Filter.Eq(m => m.ID, session.Id), Builders<UserInformation>.Update.Set(m => m.RecentClicks, profile.RecentClicks));
+            await db.GetCollection<UserInformation>("users").UpdateOneAsync(Builders<UserInformation>.Filter.Eq(m => m.Id, profile.Id), Builders<UserInformation>.Update.Set(m => m.RecentClicks, profile.RecentClicks));
 
 
         }
@@ -277,7 +305,13 @@ namespace iDunno.Models
                 var thisSessionInformation = new SessionInformation();
                 thisSessionInformation.SessionID = Guid.NewGuid().ToString();
                 response.AppendCookie(new HttpCookie("session", thisSessionInformation.SessionID));
+                //TODO: Create new user
+                UserInformation info = new UserInformation();
+                await db.GetCollection<UserInformation>("users").InsertOneAsync(info);
+                
+                thisSessionInformation.User = info.Id;
                 await db.GetCollection<SessionInformation>("sessions").InsertOneAsync(thisSessionInformation);
+                
                 return thisSessionInformation;
             }
 
