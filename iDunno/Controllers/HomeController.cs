@@ -12,12 +12,16 @@ namespace iDunno.Controllers
 
     public class HomeController : Controller
     {
-        public ActionResult ViewProduct(string Id)
+        public async Task<ActionResult> ViewProduct(string Id, string SearchID)
         {
+            iDunnoDB db = new iDunnoDB();
             TargetAPI api = new TargetAPI();
             TargetItem item = new TargetItem(api.GetObjectData(Id));
+            await db.LogClick(SearchID, Id);
+            
             return Redirect(item.Url);
         }
+
         [HttpGet]
         public ActionResult Register()
         {
@@ -49,8 +53,7 @@ namespace iDunno.Controllers
         public ActionResult Login(LoginScreen screen)
         {
             if(this.ModelState.IsValid)
-            {
-                
+            {   
             }
             return View();
         }
@@ -64,10 +67,13 @@ namespace iDunno.Controllers
         [ValidateAntiForgeryToken]
         [HttpPost]
         //POST home
-        public ActionResult Index(string search)
+        public async Task<ActionResult> Index(string search, HomeScreen screen)
         {
+            iDunnoDB db = new iDunnoDB();
+            var iable = await db.LogSearch(search);
             TargetAPI api = new TargetAPI();
-            HomeScreen screen = new HomeScreen();
+            screen.SearchQuery = search;
+            screen.QueryID = iable.Id.ToString();
             List<TargetItem> items = new List<TargetItem>();
             foreach (dynamic duo in api.FastSearch(search))
             {
