@@ -87,14 +87,52 @@ namespace iDunno.Models
 
     }
 
-    /*public class RegistrationScreenPt2
+    public class RegistrationScreenPt2
     {
         [Display (Name = "Age")]
         public int Age { get; set; }
         [Display (Name = "Gender")]
         public string Gender { get; set; }
-        [Display (Name = "Catories of Interest")]
-    }*/
+        [Display (Name = "Christmas")]
+        public bool ? interest_christmas { get; set; }
+        [Display (Name = "Halloween")]
+        public bool ? interest_halloween { get; set; }
+        [Display (Name = "Accessories")]
+        public bool ? interest_accessories { get; set; }
+        [Display (Name = "Baby")]
+        public bool ? interest_baby { get; set; }
+        [Display (Name = "Beauty")]
+        public bool ? interest_beauty { get; set; }
+        [Display (Name = "Clothing")]
+        public bool ? inerest_clothing { get; set; }
+        [Display (Name = "Electronics")]
+        public bool ? interest_electronics { get; set; }
+        [Display (Name = "Entertainment")]
+        public bool ? interest_entertainment { get; set; }
+        [Display (Name = "Furniture")]
+        public bool ? interest_furniture { get; set; }
+        [Display (Name = "Grocery & Essentials")]
+        public bool ? interest_grocery_and_essentials { get; set; }
+        [Display (Name = "Health")]
+        public bool ? interest_health { get; set; }
+        [Display (Name = "Home")]
+        public bool ? interest_home { get; set; }
+        [Display (Name = "Household Essentials")]
+        public bool ? interest_household_essentials { get; set; }
+        [Display (Name = "Party Supplies")]
+        public bool ? interest_party_supplies { get; set; }
+        [Display (Name = "Patio & Garden")]
+        public bool ? interest_patio_and_garden { get; set; }
+        [Display (Name = "Pets")]
+        public bool ? interest_pets { get; set; }
+        [Display (Name = "Shoes")]
+        public bool ? interest_shoes { get; set; }
+        [Display (Name = "Toys")]
+        public bool ? interest_toys { get; set; }
+        [Display (Name = "Video Games")]
+        public bool ? interest_video_games { get; set; }
+    }
+
 
     public class UserInformation
     {
