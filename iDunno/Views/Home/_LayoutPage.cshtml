@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -8,107 +7,53 @@
     <link rel="stylesheet" href="~/Content/bootstrap-theme.css" />
     <script type="text/javascript" src="~/Scripts/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="~/Scripts/bootstrap.js"></script>
-    <style>
-       #header {
-            height: 12%;
-        }
-
-        ​ .productDisp {
-            background-color: #ff1221;
-            box-shadow: 10px 10px 5px #888888;
-            width: 60%;
-            height: 600px;
-            margin: 0 auto;
-            border-top-left-radius: 1em;
-            border-top-right-radius: 1em;
-            border-bottom-left-radius: 1em;
-            border-bottom-right-radius: 1em;
-            /*display: -webkit-flex;
-            display: flex;
-            -webkit-align-content: center;
-            align-content: center;*/
-        }
-
-        #logo {
-            font-size: 30px;
-            line-height: 40px;
-            padding: 5px;
-        }
-
-        /*#navWrap {
-            height: 30px;
-        }*/
-
-        #nav {
-            height: 12%;
-            padding: 5px;
-            width: 100%;
-            background: #F00;
-            position: fixed;
-            top: 0;
-
-
-        }
-
-        #nav ul {
-            float: left;
-            width: inherit;
-                padding: 3px 10px;
-                background-color: #FFF;
-                margin: 0 10px 0 0;
-                /*color: #000;*/
-                list-style-type: none;
-        }
-            /*#nav ul {
-                margin: 0;
-            padding: 0;
-            }
-
-            #nav li {
-                
-            }*/
-
-
-         
-
-        br.clearLeft {
-            clear: left;
-        }
-
-        #descript {
-            padding: 10px 10px 10px 10px;
-        }
-    </style>
-    <!--<script>
-        $(function () {
-            // Stick the #nav to the top of the window
-            var nav = $('#nav');
-            var navHomeY = nav.offset().top +100;
-            var isFixed = false;
-            var $w = $(window);
-            $w.scroll(function () {
-                var scrollTop = $w.scrollTop();
-                var shouldBeFixed = scrollTop > navHomeY;
-                if (shouldBeFixed && !isFixed) {
-                    nav.css({
-                        position: 'fixed',
-                        top: 0,
-                        left: nav.offset().left,
-                        width: nav.width()
-                    });
-                    isFixed = true;
-                }
-                else if (!shouldBeFixed && isFixed) {
-                    nav.css({
-                        position: 'static'
-                    });
-                    isFixed = false;
-                }
+    <script type="text/javascript" src="~/Scripts/jquery-ui-1.11.4.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/all.css" />
+    <script type="text/javascript" src="~/Content/Dialog/js/bootstrap-dialog.js"></script>
+    <link rel="stylesheet" href="~/Content/Dialog/css/bootstrap-dialog.min.css" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#regBtn').click(function () {
+                BootstrapDialog.show({ message: $('<div></div>').load('@Url.Action("Register")') });
             });
         });
-    </script>-->
+    </script>
 </head>
 <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <!--<a class="navbar-brand" href="#">iDunno what to purchase!</a>-->
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <div class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input type="search" placeholder="Search" class="form-control glyphicon-search" />
+                    </div>
+                </div>
+                <form class="navbar-form navbar-right">
+                    <div class="form-group">
+                        <input type="text" placeholder="Email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="Password" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-success">Sign in</button>
+                    <input type="button" class="btn btn-success" id="regBtn" value="Register" />
+                </form>
+            </div><!--/.navbar-collapse -->
+        </div>
+    </nav>
+
+    <div id="register-form" title="Register account" style="display:none;">
+        @Html.Partial("Register", new iDunno.Models.RegistrationScreen())
+    </div>
     <div>
         @RenderBody()
     </div>

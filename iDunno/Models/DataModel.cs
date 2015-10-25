@@ -9,6 +9,8 @@ using MongoDB.Bson;
 using System.Threading.Tasks;
 using System.Security;
 using System.Security.Cryptography;
+using System.Net;
+using System.Net.Sockets;
 
 namespace iDunno.Models
 {
@@ -39,7 +41,25 @@ namespace iDunno.Models
         public long ViewCount { get; set; }
     }
 
-
+    public class HomeView
+    {
+        public HomeView(HomeScreen screen)
+        {
+            Screen = screen;
+        }
+        public HomeScreen Screen { get; set; }
+        [Display(Name = "Popular items")]
+        public IEnumerable<TargetItem> PopularItems
+        {
+            get
+            {
+                return Screen.PopularItemsView;
+            }
+        }
+        [Display(Name ="Search")]
+        public string Search { get; set; }
+        
+    }
     public class HomeScreen
     {
         public IEnumerable<TargetItem> UserItems {
@@ -399,7 +419,12 @@ namespace iDunno.Models
 
         public iDunnoDB()
         {
-            MongoDB.Driver.MongoClient client = new MongoDB.Driver.MongoClient(new MongoDB.Driver.MongoClientSettings() { ReplicaSetName = "idnSet" });
+            string host = Dns.GetHostAddresses("db-0.cloudapp.net").First().ToString();
+            TcpClient mclient = new TcpClient();
+
+            //MongoDB.Driver.MongoClient client = new MongoDB.Driver.MongoClient(new MongoDB.Driver.MongoClientSettings() {  Servers = new MongoServerAddress[] { new MongoServerAddress(host,27019) } }); //Cloud
+            MongoDB.Driver.MongoClient client = new MongoDB.Driver.MongoClient(new MongoDB.Driver.MongoClientSettings() {  Servers = new MongoServerAddress[] { new MongoServerAddress("127.0.0.1") } }); //Local testing
+
             db = client.GetDatabase("iDunno");
 
         }
