@@ -22,12 +22,23 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    <label for="search"></label><input type="search" name="search" />
+    
+    <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
+    <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
     <br />
-    foreach(var et in Model.Items)
+@if (Model.QueryID != null)
+{
+    foreach (var et in Model.Items)
     {
-        <br /><a href="@Url.Action("ViewProduct",new  { Id = et.Id })">@et.Description <img src="@et.ImgUrl" /></a>
+        <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
     }
+}else
+{
+    <h1>Popular items</h1>
+    <hr />
+
+}
+
 
 
 }
