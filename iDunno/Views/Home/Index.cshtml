@@ -26,20 +26,20 @@
     <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
     <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
     <br />
-@if (Model.QueryID != null)
+if (Model.QueryID != null)
 {
     foreach (var et in Model.Items)
     {
         <br />
         
-        <a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })"><p id="productDisp">@et.Description </p><img src="@et.ImgUrl" /></a>
+        <a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })"><div id="productDisp"><p id="descript"> @et.Description <img src="@et.ImgUrl" /></p></div></a>
     }
 }else
 {
         <h1>Recently viewed</h1>
         foreach (var et in Model.UserItems)
         {
-            <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
+            <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })"><div id="productDisp"><p id="descript">@et.Description <img src="@et.ImgUrl" /></p></div></a>
 
         }
     <h1>Popular items</h1>
@@ -48,7 +48,7 @@
         {
             foreach (var et in Model.PopularItemsView)
             {
-                <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
+                <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })"><div id="productDisp"><p id="descript">@et.Description <img src="@et.ImgUrl" /></p></div></a>
 
             }
         }
