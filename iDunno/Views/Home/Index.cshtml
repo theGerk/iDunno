@@ -26,7 +26,7 @@
     <label for="search"></label><input type="search" name="search" value="@(Model.SearchQuery ?? "")" />
     <input type="hidden" id="queryID" value="@(Model.QueryID ?? "")" />
     <br />
-@if (Model.QueryID != null)
+if (Model.QueryID != null)
 {
     foreach (var et in Model.Items)
     {
@@ -34,10 +34,23 @@
     }
 }else
 {
+        <h1>Recently viewed</h1>
+        foreach (var et in Model.UserItems)
+        {
+            <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
+
+        }
     <h1>Popular items</h1>
     <hr />
+        if (Model.PopularItems != null)
+        {
+            foreach (var et in Model.PopularItemsView)
+            {
+                <br /><a href="@Url.Action("ViewProduct", new { Id = et.Id, SearchID = Model.QueryID })">@et.Description <img src="@et.ImgUrl" /></a>
 
-}
+            }
+        }
+    }
 
 
 
